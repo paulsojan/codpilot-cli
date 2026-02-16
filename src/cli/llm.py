@@ -1,7 +1,8 @@
-import keyring
-import questionary
 import os
 import subprocess
+
+import keyring
+import questionary
 import typer
 
 SERVICE_NAME = "codpilot"
@@ -41,7 +42,7 @@ def set_llm_token_to_env(token):
 
 
 def ping_model(model, token):
-    typer.echo("🤖 Pinging {}".format(model))
+    typer.echo(f"🤖 Pinging {model}")
     try:
         if model == "OpenAI":
             cmd = [
@@ -97,4 +98,4 @@ def ping_model(model, token):
 
     except Exception as e:
         typer.echo(f"Error: {e}")
-        raise SystemExit(1)
+        SystemExit(1)

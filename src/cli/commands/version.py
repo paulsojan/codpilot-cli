@@ -1,5 +1,6 @@
-import typer
 from importlib.metadata import version
+
+import typer
 
 
 def version_callback(value: bool):

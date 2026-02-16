@@ -1,7 +1,8 @@
-import questionary
-import keyring
-import requests
 import time
+
+import keyring
+import questionary
+import requests
 import typer
 
 from src.cli.llm import ask_llm_token
