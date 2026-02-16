@@ -1,12 +1,15 @@
 import questionary
 import keyring
 import logging
+import requests
+import time
+
 from app.cli.llm import ask_llm_token
 
 WORKFLOW_OPTIONS = {
     "review_pr": "Review PR",
     "create_feature": "Create a new feature",
-    "suggest_changes": "Add your suggestions to the PR/Issue",
+    "suggest_changes": "Add your suggestions to the Issue",
 }
 LLM_MODELS = ["Gemini", "OpenAI", "Anthropic"]
 SERVICE_NAME = "github-agent"
@@ -14,13 +17,25 @@ LLM_MODEL_KEY = "llm_model"
 LLM_TOKEN_KEY = "llm_api_token"
 
 
-def ask_repo_url():
+def ask_repo_url(agent_type):
+    if agent_type == "create_feature":
+        msg = "Enter the GitHub repository URL:"
+    elif agent_type == "suggest_changes":
+        msg = "Enter the GitHub Issue URL:"
+    else:
+        msg = "Enter the GitHub PR URL:"
+
     repo_url = questionary.text(
-        "Enter the GitHub repository URL:",
+        msg,
     ).ask()
 
     if not repo_url:
-        raise ValueError("⛔️ Repo URL is required")
+        logging.error("⛔️ URL is required")
+        raise SystemExit(1)
+
+    if not repo_url.startswith("https://github.com/"):
+        logging.error("⛔️ Invalid URL")
+        raise SystemExit(1)
 
     return repo_url
 
@@ -35,7 +50,8 @@ def ask_agent_type():
     ).ask()
 
     if not choice:
-        raise ValueError("Mode is required")
+        logging.error("Mode is required")
+        raise SystemExit(1)
 
     description = None
     if choice == "create_feature":
@@ -44,7 +60,8 @@ def ask_agent_type():
         ).ask()
 
         if not description:
-            raise ValueError("Description is required")
+            logging.error("Description is required")
+            raise SystemExit(1)
 
     return choice, description
 
@@ -53,6 +70,7 @@ def ask_llm_model():
     selected_model = keyring.get_password(SERVICE_NAME, LLM_MODEL_KEY)
 
     if selected_model:
+        logging.info(f"Using LLM model {selected_model}")
         return selected_model
 
     model = questionary.select(
@@ -61,9 +79,11 @@ def ask_llm_model():
     ).ask()
 
     if not model:
-        raise ValueError("LLM model is required")
+        logging.error("LLM model is required")
+        raise SystemExit(1)
 
     keyring.set_password(SERVICE_NAME, LLM_MODEL_KEY, model)
+
     return model
 
 
@@ -76,9 +96,15 @@ def ask_github_token():
     token = questionary.password("Enter your GitHub API token:").ask()
 
     if not token:
-        raise ValueError("GitHub token is required")
+        logging.error("⛔️ GitHub token is required")
+        raise SystemExit(1)
 
-    keyring.set_password(SERVICE_NAME, "github_token", token)
+    if _validate_github_token(token):
+        keyring.set_password(SERVICE_NAME, "github_token", token)
+        time.sleep(1)
+    else:
+        logging.error("⛔️ Invalid GitHub token")
+        raise SystemExit(1)
 
 
 def reset_github_token():
@@ -119,6 +145,20 @@ def change_llm_model():
         return
 
     keyring.delete_password(SERVICE_NAME, LLM_MODEL_KEY)
-    ask_llm_model()
-    keyring.delete_password(SERVICE_NAME, LLM_TOKEN_KEY)
-    ask_llm_token()
+    model = ask_llm_model()
+    if keyring.get_password(SERVICE_NAME, LLM_TOKEN_KEY):
+        keyring.delete_password(SERVICE_NAME, LLM_TOKEN_KEY)
+
+    ask_llm_token(model)
+
+
+def _validate_github_token(token: str) -> bool:
+    try:
+        resp = requests.get(
+            "https://api.github.com/user",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=5,
+        )
+        return resp.status_code == 200
+    except requests.RequestException:
+        return False

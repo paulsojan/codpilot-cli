@@ -1,8 +1,6 @@
 from google.adk.runners import App, Runner
 from app.services.runner_service import RunnerService
 from google.adk.sessions import InMemorySessionService
-from app.agents.pr_review_agent import pr_review_agent
-from app.agents.feature_agent import feature_agent
 import uuid
 
 session_service = InMemorySessionService()
@@ -37,8 +35,16 @@ def get_runner(app: App):
 
 def get_agent_by_type(agent_type):
     if agent_type == "review_pr":
+        from app.agents.pr_review_agent import pr_review_agent
+
         return pr_review_agent
     elif agent_type == "create_feature":
+        from app.agents.feature_agent import feature_agent
+
         return feature_agent
+    elif agent_type == "suggest_changes":
+        from app.agents.suggestion_agent import suggestion_agent
+
+        return suggestion_agent
     else:
         raise ValueError(f"Unknown agent type: {agent_type}")

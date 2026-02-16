@@ -2,36 +2,32 @@ import keyring
 import questionary
 import logging
 import os
+import subprocess
 
 SERVICE_NAME = "github-agent"
 LLM_TOKEN_KEY = "llm_api_token"
 LLM_MODEL_KEY = "llm_model"
 
 
-def ask_llm_token():
+def ask_llm_token(model):
     token = keyring.get_password(SERVICE_NAME, LLM_TOKEN_KEY)
 
     if token:
         set_llm_token_to_env(token)
         return
 
-    token = questionary.password("Enter your LLM API token:").ask()
+    token = questionary.password(
+        f"🔑 Enter your {model} token:",
+    ).ask()
 
     if not token:
         logging.error("❌ LLM token is required")
         raise SystemExit(1)
 
-    keyring.set_password(SERVICE_NAME, LLM_TOKEN_KEY, token)
-    set_llm_token_to_env(token)
-    logging.info("🔐 Token saved securely in system keychain")
-
-
-def delete_token():
-    try:
-        keyring.delete_password(SERVICE_NAME, LLM_TOKEN_KEY)
-        logging.info("🗑️ Token removed from system keychain")
-    except keyring.errors.PasswordDeleteError:
-        logging.warning("⚠️ No token found to delete")
+    if ping_model(model, token):
+        keyring.set_password(SERVICE_NAME, LLM_TOKEN_KEY, token)
+        set_llm_token_to_env(token)
+        logging.info("🔐 Token saved securely in system keychain")
 
 
 def set_llm_token_to_env(token):
@@ -42,3 +38,63 @@ def set_llm_token_to_env(token):
         os.environ["ANTHROPIC_API_KEY"] = token
     else:
         os.environ["GEMINI_API_KEY"] = token
+
+
+def ping_model(model, token):
+    logging.info("🤖 Pinging {}".format(model))
+    try:
+        if model == "OpenAI":
+            cmd = [
+                "curl",
+                "-s",
+                "-o",
+                "/dev/null",
+                "-w",
+                "%{http_code}",
+                "https://api.openai.com/v1/models",
+                "-H",
+                f"Authorization: Bearer {token}",
+            ]
+
+        elif model == "Anthropic":
+            cmd = [
+                "curl",
+                "-s",
+                "-o",
+                "/dev/null",
+                "-w",
+                "%{http_code}",
+                "https://api.anthropic.com/v1/models",
+                "-H",
+                f"x-api-key: {token}",
+                "-H",
+                "anthropic-version: 2023-06-01",
+            ]
+
+        elif model == "Gemini":
+            cmd = [
+                "curl",
+                "-s",
+                "-o",
+                "/dev/null",
+                "-w",
+                "%{http_code}",
+                f"https://generativelanguage.googleapis.com/v1beta/models?key={token}",
+            ]
+
+        else:
+            logging.error("❌ Unknown model provider")
+            raise SystemExit(1)
+
+        result = subprocess.run(cmd, capture_output=True, text=True)
+
+        if result.stdout.strip() == "200":
+            logging.info("✅ Model ping successful.")
+            return True
+        else:
+            logging.error("❌ Model ping failed. Invalid token.")
+            raise SystemExit(1)
+
+    except Exception as e:
+        logging.debug(f"Error: {e}")
+        raise SystemExit(1)
