@@ -1,6 +1,6 @@
 [project]
 name = "codpilot"
-version = "0.1.1"
+version = "0.1.2"
 description = "A multi-agent CLI tool that integrates with GitHub to review PRs, create features, and suggest changes."
 readme = "README.md"
 requires-python = ">=3.14"
