@@ -1,7 +1,7 @@
 import typer
-from app.cli.commands.run import run as run_command
-from app.cli.commands.version import version_callback
-from app.cli.inputs import reset_github_token, change_llm_model
+from src.cli.commands.run import run as run_command
+from src.cli.commands.version import version_callback
+from src.cli.inputs import reset_github_token, change_llm_model
 
 app = typer.Typer(help="🤖 CodPilot CLI")
 

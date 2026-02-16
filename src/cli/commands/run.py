@@ -1,18 +1,18 @@
-from app.workflows.agent_workflow import agent_workflow
+from src.workflows.agent_workflow import agent_workflow
 import typer
 import asyncio
-from app.cli.inputs import (
+from src.cli.inputs import (
     ask_repo_url,
     ask_agent_type,
     ask_llm_model,
     ask_github_token,
 )
-from app.cli.llm import ask_llm_token
+from src.cli.llm import ask_llm_token
 from rich.console import Console
 from rich.panel import Panel
 from rich import box
 from importlib.metadata import version
-from app.cli.spinner import run_with_spinner
+from src.cli.spinner import run_with_spinner
 
 console = Console()
 

@@ -1,6 +1,6 @@
 from google.adk.agents.llm_agent import LlmAgent
-from app.agents.tools.github_mcp import github_mcp
-from app.services.build_model_service import build_model
+from src.agents.tools.github_mcp import github_mcp
+from src.services.build_model_service import build_model
 from google.adk.tools.tool_context import ToolContext
 from google.adk.agents.loop_agent import LoopAgent
 

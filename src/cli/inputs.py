@@ -4,7 +4,7 @@ import requests
 import time
 import typer
 
-from app.cli.llm import ask_llm_token
+from src.cli.llm import ask_llm_token
 
 WORKFLOW_OPTIONS = {
     "review_pr": "Review PR",
