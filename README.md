@@ -18,7 +18,7 @@ pip install codpilot
 
 **Create Feature** — Analyzes the existing codebase, implements a described feature, and opens a draft pull request.
 
-**Suggest Changes** — Reads a GitHub Issue discussion, analyzes the codebase, and posts technical suggestions as comments.
+**Add Suggestions to Issue** — Reads a GitHub Issue discussion, analyzes the codebase, and posts technical suggestions as comments.
 
 ## Available Commands
 
