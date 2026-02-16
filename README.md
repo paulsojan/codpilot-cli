@@ -35,6 +35,11 @@ pip install codpilot
 - A GitHub personal access token
 - An API key for at least one LLM provider (Gemini, OpenAI, or Anthropic)
 
+## Creating a GitHub Personal Access Token (Classic)
+
+1. Go to [GitHub Settings > Developer settings > Personal access tokens > Tokens (classic)](https://github.com/settings/tokens)
+2. Click **Generate new token** > **Generate new token (classic)**
+
 ## Usage
 
 ```bash
