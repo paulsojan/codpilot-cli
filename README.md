@@ -2,7 +2,7 @@
 
 ![codpilot](https://img.shields.io/pypi/v/codpilot)
 
-A multi-agent CLI tool that integrates with GitHub to review pull requests, create new features, and suggest changes on your behalf — all from your terminal.
+A multi-agent CLI tool that connects to your GitHub account to review pull requests, create new features, and contribute to issue discussions — all directly from your terminal.
 
 Built with [Google ADK](https://github.com/google/adk-python) and [GitHub MCP](https://github.com/github/github-mcp-server).
 
