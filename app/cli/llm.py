@@ -1,8 +1,8 @@
 import keyring
 import questionary
-import logging
 import os
 import subprocess
+import typer
 
 SERVICE_NAME = "github-agent"
 LLM_TOKEN_KEY = "llm_api_token"
@@ -21,13 +21,13 @@ def ask_llm_token(model):
     ).ask()
 
     if not token:
-        logging.error("❌ LLM token is required")
+        typer.echo("❌ LLM token is required")
         raise SystemExit(1)
 
     if ping_model(model, token):
         keyring.set_password(SERVICE_NAME, LLM_TOKEN_KEY, token)
         set_llm_token_to_env(token)
-        logging.info("🔐 Token saved securely in system keychain")
+        typer.echo("🔐 Token saved securely in system keychain.")
 
 
 def set_llm_token_to_env(token):
@@ -41,7 +41,7 @@ def set_llm_token_to_env(token):
 
 
 def ping_model(model, token):
-    logging.info("🤖 Pinging {}".format(model))
+    typer.echo("🤖 Pinging {}".format(model))
     try:
         if model == "OpenAI":
             cmd = [
@@ -83,18 +83,18 @@ def ping_model(model, token):
             ]
 
         else:
-            logging.error("❌ Unknown model provider")
+            typer.echo("❌ Unknown model provider")
             raise SystemExit(1)
 
         result = subprocess.run(cmd, capture_output=True, text=True)
 
         if result.stdout.strip() == "200":
-            logging.info("✅ Model ping successful.")
+            typer.echo("✅ Model ping successful.")
             return True
         else:
-            logging.error("❌ Model ping failed. Invalid token.")
+            typer.echo("❌ Model ping failed. Invalid token.")
             raise SystemExit(1)
 
     except Exception as e:
-        logging.debug(f"Error: {e}")
+        typer.echo(f"Error: {e}")
         raise SystemExit(1)

@@ -1,8 +1,8 @@
 import questionary
 import keyring
-import logging
 import requests
 import time
+import typer
 
 from app.cli.llm import ask_llm_token
 
@@ -30,11 +30,11 @@ def ask_repo_url(agent_type):
     ).ask()
 
     if not repo_url:
-        logging.error("⛔️ URL is required")
+        typer.echo("⛔️ URL is required")
         raise SystemExit(1)
 
     if not repo_url.startswith("https://github.com/"):
-        logging.error("⛔️ Invalid URL")
+        typer.echo("⛔️ Invalid URL")
         raise SystemExit(1)
 
     return repo_url
@@ -50,7 +50,7 @@ def ask_agent_type():
     ).ask()
 
     if not choice:
-        logging.error("Mode is required")
+        typer.echo("Mode is required")
         raise SystemExit(1)
 
     description = None
@@ -60,7 +60,7 @@ def ask_agent_type():
         ).ask()
 
         if not description:
-            logging.error("Description is required")
+            typer.echo("Description is required")
             raise SystemExit(1)
 
     return choice, description
@@ -70,7 +70,7 @@ def ask_llm_model():
     selected_model = keyring.get_password(SERVICE_NAME, LLM_MODEL_KEY)
 
     if selected_model:
-        logging.info(f"Using LLM model {selected_model}")
+        typer.echo(f"Using LLM model {selected_model}")
         return selected_model
 
     model = questionary.select(
@@ -79,7 +79,7 @@ def ask_llm_model():
     ).ask()
 
     if not model:
-        logging.error("LLM model is required")
+        typer.echo("LLM model is required")
         raise SystemExit(1)
 
     keyring.set_password(SERVICE_NAME, LLM_MODEL_KEY, model)
@@ -96,14 +96,14 @@ def ask_github_token():
     token = questionary.password("Enter your GitHub API token:").ask()
 
     if not token:
-        logging.error("⛔️ GitHub token is required")
+        typer.echo("⛔️ GitHub token is required")
         raise SystemExit(1)
 
     if _validate_github_token(token):
         keyring.set_password(SERVICE_NAME, "github_token", token)
         time.sleep(1)
     else:
-        logging.error("⛔️ Invalid GitHub token")
+        typer.echo("⛔️ Invalid GitHub token")
         raise SystemExit(1)
 
 
@@ -111,7 +111,7 @@ def reset_github_token():
     existing = keyring.get_password(SERVICE_NAME, "github_token")
 
     if not existing:
-        logging.error("⚠️ No GitHub token found in keyring.")
+        typer.echo("⚠️ No GitHub token found in keyring.")
         return
 
     confirm = questionary.confirm(
@@ -119,21 +119,21 @@ def reset_github_token():
     ).ask()
 
     if not confirm:
-        logging.info("ℹ️ Token reset cancelled.")
+        typer.echo("ℹ️ Token reset cancelled.")
         return
 
     keyring.delete_password(SERVICE_NAME, "github_token")
-    logging.info("🗑️ GitHub token removed.")
+    typer.echo("🗑️ GitHub token removed.")
 
     ask_github_token()
-    logging.info("GitHub token has been reset successfully.")
+    typer.echo("GitHub token has been reset successfully.")
 
 
 def change_llm_model():
     existing = keyring.get_password(SERVICE_NAME, LLM_MODEL_KEY)
 
     if not existing:
-        logging.error("⚠️ No LLM model found.")
+        typer.echo("⚠️ No LLM model found.")
         return
 
     confirm = questionary.confirm(
@@ -141,7 +141,7 @@ def change_llm_model():
     ).ask()
 
     if not confirm:
-        logging.info("ℹ️ Change LLM model cancelled.")
+        typer.echo("ℹ️ Change LLM model cancelled.")
         return
 
     keyring.delete_password(SERVICE_NAME, LLM_MODEL_KEY)

@@ -1,5 +1,5 @@
 from app.workflows.agent_workflow import agent_workflow
-import logging
+import typer
 import asyncio
 from app.cli.inputs import (
     ask_repo_url,
@@ -12,6 +12,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich import box
 from importlib.metadata import version
+from app.cli.spinner import run_with_spinner
 
 console = Console()
 
@@ -33,9 +34,11 @@ def run():
     ask_github_token()
 
     asyncio.run(
-        agent_workflow(
-            repo_url=repo_url, agent_type=agent_type, description=description
+        run_with_spinner(
+            agent_workflow(
+                repo_url=repo_url, agent_type=agent_type, description=description
+            )
         )
     )
 
-    logging.info("✅ Execution completed")
+    typer.echo("✅ Execution completed")

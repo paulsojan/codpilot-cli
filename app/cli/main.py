@@ -1,13 +1,26 @@
 import typer
 from app.cli.commands.run import run as run_command
+from app.cli.commands.version import version_callback
 from app.cli.inputs import reset_github_token, change_llm_model
-import logging
 
 app = typer.Typer(help="🤖 CodePilot CLI")
 
-logging.basicConfig(level=logging.INFO, format="%(message)s")
 
-app.command("run")(run_command)
+@app.callback()
+def get_version(
+    version: bool = typer.Option(
+        False,
+        "--version",
+        "-v",
+        callback=version_callback,
+        is_eager=True,
+        help="Get codepilot version.",
+    ),
+):
+    pass
+
+
+app.command("run", help="📀 Run the agent.")(run_command)
 app.command("reset-github-token", help="🔑 Reset the stored GitHub token.")(
     reset_github_token
 )
