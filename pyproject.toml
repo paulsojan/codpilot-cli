@@ -1,9 +1,18 @@
 [project]
-name = "codepilot"
-version = "0.1.0"
-description = "Add your description here"
+name = "codpilot"
+version = "0.1.1"
+description = "A multi-agent CLI tool that integrates with GitHub to review PRs, create features, and suggest changes."
 readme = "README.md"
 requires-python = ">=3.14"
+license = "MIT"
+keywords = ["cli", "github", "codpilot", "cli"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Quality Assurance",
+    "Programming Language :: Python :: 3.14",
+]
 dependencies = [
     "google-adk>=1.24.0",
     "keyring>=25.7.0",
@@ -15,4 +24,11 @@ dependencies = [
 ]
 
 [project.scripts]
-codepilot = "app.cli.main:app"
+codpilot = "app.cli.main:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]

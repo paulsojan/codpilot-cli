@@ -20,7 +20,7 @@ console = Console()
 def run():
     console.print(
         Panel(
-            f"[bold cyan]CodePilot[/bold cyan] [green]v{version('codepilot')}[/green]\n"
+            f"[bold cyan]CodPilot[/bold cyan] [green]v{version('codpilot')}[/green]\n"
             "[dim]Autonomous coding agent for GitHub[/dim]",
             box=box.DOUBLE,
             border_style="cyan",

@@ -237,9 +237,9 @@ wheels = [
 ]
 
 [[package]]
-name = "codepilot"
+name = "codpilot"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "google-adk" },
     { name = "keyring" },

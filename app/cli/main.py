@@ -3,7 +3,7 @@ from app.cli.commands.run import run as run_command
 from app.cli.commands.version import version_callback
 from app.cli.inputs import reset_github_token, change_llm_model
 
-app = typer.Typer(help="🤖 CodePilot CLI")
+app = typer.Typer(help="🤖 CodPilot CLI")
 
 
 @app.callback()
@@ -14,7 +14,7 @@ def get_version(
         "-v",
         callback=version_callback,
         is_eager=True,
-        help="Get codepilot version.",
+        help="Get codpilot version.",
     ),
 ):
     pass
