@@ -4,7 +4,7 @@ import os
 import subprocess
 import typer
 
-SERVICE_NAME = "github-agent"
+SERVICE_NAME = "codpilot"
 LLM_TOKEN_KEY = "llm_api_token"
 LLM_MODEL_KEY = "llm_model"
 

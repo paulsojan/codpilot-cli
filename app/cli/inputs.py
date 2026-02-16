@@ -12,7 +12,7 @@ WORKFLOW_OPTIONS = {
     "suggest_changes": "Add your suggestions to the Issue",
 }
 LLM_MODELS = ["Gemini", "OpenAI", "Anthropic"]
-SERVICE_NAME = "github-agent"
+SERVICE_NAME = "codpilot"
 LLM_MODEL_KEY = "llm_model"
 LLM_TOKEN_KEY = "llm_api_token"
 

@@ -1,7 +1,7 @@
 import keyring
 from google.adk.models.lite_llm import LiteLlm
 
-SERVICE_NAME = "github-agent"
+SERVICE_NAME = "codpilot"
 LLM_MODEL_KEY = "llm_model"
 
 
