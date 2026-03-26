@@ -49,7 +49,7 @@ codpilot run
 The interactive prompt will walk you through:
 
 1. Selecting an agent (Review PR / Create Feature / Suggest Changes)
-2. Entering the GitHub URL (PR, repository, or issue depending on the agent)
+2. Entering the GitHub URL (PR, repository, or issue, depending on the agent)
 3. Choosing an LLM provider (Gemini / OpenAI / Anthropic)
 4. Providing API credentials for GitHub and the LLM (cached in your system keychain for future runs)
 
